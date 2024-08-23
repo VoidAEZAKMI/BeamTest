@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from web.models import Product, Category, Supplier, Order
-from .serializers import ProductSerializer, CategorySerializer, SupplierSerializer, OrderSerializer
+from web.models import Product, Category, Supplier, Order, Customer
+from .serializers import ProductSerializer, CategorySerializer, SupplierSerializer, OrderSerializer, CustomerSerializer
 from rest_framework.permissions import AllowAny
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -29,6 +29,10 @@ class SupplierViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
 
 

@@ -11,6 +11,7 @@ router.register(r'products', views.ProductViewSet)
 router.register(r'categories', views.CategoryViewSet)
 router.register(r'suppliers', views.SupplierViewSet)
 router.register(r'orders', views.OrderViewSet)
+router.register(r'customers', views.CustomerViewSet)
 
 
 urlpatterns = [

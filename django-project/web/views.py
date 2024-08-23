@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product
+from .models import Product, Category, Customer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
@@ -7,7 +7,13 @@ from django.http import JsonResponse
 
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'index.html', {'products': products})
+    categories = Category.objects.all()
+    customers = Customer.objects.all()
+    return render(request, 'index.html', {
+        'products': products,
+        'categories': categories,
+        'customers': customers
+    })
 
 
 def product_create(request):

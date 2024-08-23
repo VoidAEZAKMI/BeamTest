@@ -45,20 +45,53 @@
         </form>
     </div>
 
+<!--    <div class="product-list">-->
+<!--        <h2>Список продуктов</h2>-->
+<!--        <ul id="productList" class="list-group">-->
+<!--            {% for product in products %}-->
+<!--            <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">-->
+<!--                {{ product.name }} - ${{ product.price }}-->
+<!--                <div>-->
+<!--                    <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }})">Редактировать</button>-->
+<!--                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--            {% endfor %}-->
+<!--        </ul>-->
+<!--    </div>-->
+
     <div class="product-list">
-        <h2>Список продуктов</h2>
-        <ul id="productList" class="list-group">
-            {% for product in products %}
-            <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">
-                {{ product.name }} - ${{ product.price }}
-                <div>
-                    <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }})">Редактировать</button>
-                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <h2>Список продуктов</h2>
+    <ul id="productList" class="list-group">
+        {% for product in products %}
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">
+            {{ product.name }} - ${{ product.price }}
+
+            <!-- Отображение связанных категорий -->
+            <div>
+                <strong>Категории:</strong>
+                {% for category in product.categories.all %}
+                    {{ category.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Отображение связанных клиентов -->
+            <div>
+                <strong>Клиенты:</strong>
+                {% for customer in product.customers.all %}
+                    {{ customer.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+
+            <div>
+                <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }})">Редактировать</button>
+                <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
 
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">

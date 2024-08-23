@@ -45,20 +45,6 @@
         </form>
     </div>
 
-<!--    <div class="product-list">-->
-<!--        <h2>Список продуктов</h2>-->
-<!--        <ul id="productList" class="list-group">-->
-<!--            {% for product in products %}-->
-<!--            <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">-->
-<!--                {{ product.name }} - ${{ product.price }}-->
-<!--                <div>-->
-<!--                    <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }})">Редактировать</button>-->
-<!--                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>-->
-<!--                </div>-->
-<!--            </li>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-<!--    </div>-->
 
     <div class="product-list">
     <h2>Список продуктов</h2>
@@ -148,7 +134,7 @@
 
     <script>
         // WebSocket connection and notification handling
-        const ws = new WebSocket('ws://localhost:8000/ws/notifications/');
+        const ws = new WebSocket('ws://35.225.1.29:8000/ws/notifications/');
 
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);

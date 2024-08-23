@@ -1,23 +1,34 @@
 version: '3.7'
 
 services:
-  django_gunicorn:
-    volumes:
-      - static:/static
-    env_file:
-      - .env
+  django:
     build:
       context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - static_volume:/app/django-project/static
     ports:
       - "8000:8000"
+    command: [ "daphne", "-p", "8000", "beam.asgi:application", "-b", "0.0.0.0" ]
+    depends_on:
+      - redis
+
   nginx:
-    build: ./nginx
+    image: nginx:latest
     volumes:
-      - static:/static
+      - ./nginx:/etc/nginx/conf.d
+      - static_volume:/static
     ports:
       - "80:80"
     depends_on:
-      - django_gunicorn
+      - django
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
 
 volumes:
-  static:
+  static_volume:

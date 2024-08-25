@@ -41,43 +41,53 @@
                 <label for="price" class="form-label">Цена продукта:</label>
                 <input type="number" id="price" name="price" class="form-control" required>
             </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Категория продукта:</label>
+                <select id="category" name="category" class="form-select" required>
+                    <option value="" selected disabled>Выберите категорию</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <button type="submit" class="btn btn-success">Создать продукт</button>
+
+            <div class="position-absolute top-0 end-0 mt-3 me-3">
+                <a href="{% url 'category_list' %}" class="btn btn-primary">Добавить категорию</a>
+            </div>
         </form>
     </div>
 
-
     <div class="product-list">
-    <h2>Список продуктов</h2>
-    <ul id="productList" class="list-group">
-        {% for product in products %}
-        <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">
-            {{ product.name }} - ${{ product.price }}
+        <h2>Список продуктов</h2>
+        <ul id="productList" class="list-group">
+            {% for product in products %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" id="product-{{ product.pk }}">
+                {{ product.name }} - {{ product.price }} сом
 
-            <!-- Отображение связанных категорий -->
-            <div>
-                <strong>Категории:</strong>
-                {% for category in product.categories.all %}
-                    {{ category.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </div>
+                <div>
+                    <strong>Категории:</strong>
+                    {% for category in product.categories.all %}
+                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
 
-            <!-- Отображение связанных клиентов -->
-            <div>
-                <strong>Клиенты:</strong>
-                {% for customer in product.customers.all %}
-                    {{ customer.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </div>
+                <!-- Отображение связанных клиентов -->
+<!--                <div>-->
+<!--                    <strong>Клиенты:</strong>-->
+<!--                    {% for customer in product.customers.all %}-->
+<!--                        {{ customer.name }}{% if not forloop.last %}, {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </div>-->
 
-            <div>
-                <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }})">Редактировать</button>
-                <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-
+                <div>
+                    <button class="btn btn-warning btn-sm" onclick="openUpdateModal({{ product.pk }}, '{{ product.name }}', {{ product.price }}, {{ product.category.id }})">Редактировать</button>
+                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal({{ product.pk }})">Удалить</button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -96,6 +106,14 @@
                         <div class="mb-3">
                             <label for="updatePrice" class="form-label">Цена продукта:</label>
                             <input type="number" id="updatePrice" name="price" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateCategory" class="form-label">Категория продукта:</label>
+                            <select id="updateCategory" name="category" class="form-select" required>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -129,12 +147,10 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // WebSocket connection and notification handling
-        const ws = new WebSocket('ws://35.225.1.29:8000/ws/notifications/');
+        const ws = new WebSocket('ws://localhost:8000/ws/notifications/');
 
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);
@@ -173,7 +189,10 @@
                     newProduct.innerHTML = `
                         ${data.product_name} - $${data.product_price}
                         <div>
-                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal(${data.product_id}, '${data.product_name}', ${data.product_price})">Редактировать</button>
+                            <strong>Категория:</strong> ${data.category_name}
+                        </div>
+                        <div>
+                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal(${data.product_id}, '${data.product_name}', ${data.product_price}, ${data.category_id})">Редактировать</button>
                             <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${data.product_id})">Удалить</button>
                         </div>
                     `;
@@ -203,7 +222,10 @@
                     productElement.innerHTML = `
                         ${data.product_name} - $${data.product_price}
                         <div>
-                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal(${data.product_id}, '${data.product_name}', ${data.product_price})">Редактировать</button>
+                            <strong>Категория:</strong> ${data.category_name}
+                        </div>
+                        <div>
+                            <button class="btn btn-warning btn-sm" onclick="openUpdateModal(${data.product_id}, '${data.product_name}', ${data.product_price}, ${data.category_id})">Редактировать</button>
                             <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${data.product_id})">Удалить</button>
                         </div>
                     `;
@@ -238,10 +260,11 @@
             .catch(error => console.error('Ошибка:', error));
         });
 
-        function openUpdateModal(id, name, price) {
+        function openUpdateModal(id, name, price, categoryId) {
             const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
             document.getElementById('updateName').value = name;
             document.getElementById('updatePrice').value = price;
+            document.getElementById('updateCategory').value = categoryId;
             document.getElementById('updateForm').action = `/products/${id}/update/`;
             updateModal.show();
         }
@@ -252,6 +275,8 @@
             deleteModal.show();
         }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
